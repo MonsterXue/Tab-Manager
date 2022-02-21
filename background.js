@@ -1,7 +1,7 @@
 /*
  * @Author: MonsterXue
  * @Date: 2022-02-18 14:30:30
- * @LastEditTime: 2022-02-21 15:48:55
+ * @LastEditTime: 2022-02-21 17:21:19
  * @LastEditors: MonsterXue
  * @FilePath: \tab-manager\background.js
  * @Description:
@@ -17,18 +17,24 @@ chrome.runtime.onInstalled.addListener(() => {
   const injectIntoTab = (tab) => {
     // tab页中注入脚本
     const scripts = manifest.content_scripts[0].js
-    scripts.forEach((script) => {
-      tab.url && chrome.scripting.executeScript({
-        target: {
-          tabId: tab.id
-        },
-        files: [script]
-      })
+    const css = manifest.content_scripts[0].css
 
-      tab.url && chrome.scripting.insertCSS({
-        target: { tabId: tab.id },
-        files: [manifest.content_scripts[0].css[0]],
-      });
+    scripts.forEach((script) => {
+      tab.url &&
+        chrome.scripting.executeScript({
+          target: {
+            tabId: tab.id
+          },
+          files: [script]
+        })
+    })
+
+    css.forEach((style) => {
+      tab.url &&
+        chrome.scripting.insertCSS({
+          target: { tabId: tab.id },
+          files: [style]
+        })
     })
   }
 
