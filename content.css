@@ -1,0 +1,116 @@
+* {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  width: unset;
+  height: unset;
+  line-height: normal;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  src: url('assets/Inter-Regular.ttf');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  src: url('assets/Inter-Medium.ttf');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  src: url('assets/Inter-SemiBold.ttf');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  src: url('assets/Inter-Bold.ttf');
+}
+
+#tab-manager .tab-manager-content::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+#tab-manager .tab-manager-content::-webkit-scrollbar-thumb {
+  background-color: rgba(127, 127, 127, 0.6);
+  background-clip: padding-box;
+  border: 2px solid transparent;
+  border-radius: 5px;
+}
+
+#tab-manager .tab-manager-content::-webkit-scrollbar-thumb:vertical:hover,
+#tab-manager .tab-manager-content::-webkit-scrollbar-thumb:horizontal:hover {
+  background-color: rgb(110, 110, 110);
+}
+
+#tab-manager .tab-manager-content::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+#tab-manager .tab-manager-content::-webkit-scrollbar-corner {
+  background: none;
+}
+
+#tab-manager .tab-manager-content::placeholder {
+  color: #63687b;
+  font-size: 12px;
+}
+
+#tab-manager {
+  position: fixed;
+  width: 700px;
+  border-radius: 5px;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%, -20%);
+  z-index: 999999;
+  background-color: #fff;
+  font-family: Inter !important;
+}
+
+.tab-manager-dialog {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3);
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999999;
+}
+
+#tab-manager .tab-manager-head {
+  padding: 5px 20px;
+  box-sizing: border-box;
+}
+
+#tab-manager input {
+  outline: none;
+  border: none;
+  width: 100%;
+  font-size: 20px;
+  color: #2b2d41;
+  height: 50px;
+  line-height: 50px;
+}
+
+#tab-manager .tab-manager-content {
+  height: 440px;
+  overflow-y: scroll;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+#tab-manager .tab-manager-footer {
+  color: #999;
+  padding: 10px 20px;
+  text-align: right;
+  font-size: 14px;
+}
