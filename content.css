@@ -95,7 +95,7 @@
   outline: none;
   border: none;
   width: 100%;
-  font-size: 20px;
+  font-size: 18px;
   color: #2b2d41;
   height: 50px;
   line-height: 50px;
@@ -103,9 +103,44 @@
 
 #tab-manager .tab-manager-content {
   height: 440px;
-  overflow-y: scroll;
+  overflow-y: overlay;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.tab-manager-content .tab-manager-item-wrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-left: 2px solid transparent;
+  height: 60px;
+  padding: 10px 40px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.tab-manager-content .tab-manager-item-wrap:hover {
+  border-left: 2px solid #6068d2;
+  background-color: #eff3f9;
+}
+
+.tab-manager-item-wrap .tab-manager-item-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.tab-manager-item-wrap .tab-manager-item-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.tab-manager-tips {
+  flex-shrink: 0;
 }
 
 #tab-manager .tab-manager-footer {
@@ -113,4 +148,10 @@
   padding: 10px 20px;
   text-align: right;
   font-size: 14px;
+}
+
+.tab-manager-closing {
+  display: none !important;
+  opacity: 0 !important;
+  z-index: 0 !important;
 }

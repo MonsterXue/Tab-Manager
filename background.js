@@ -1,7 +1,7 @@
 /*
  * @Author: MonsterXue
  * @Date: 2022-02-18 14:30:30
- * @LastEditTime: 2022-02-21 17:21:19
+ * @LastEditTime: 2022-02-22 16:34:47
  * @LastEditors: MonsterXue
  * @FilePath: \tab-manager\background.js
  * @Description:
@@ -58,24 +58,51 @@ chrome.runtime.onInstalled.addListener(() => {
   )
 })
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  // 接收content发送的消息
+  switch (message.request) {
+    case 'get-actions': {
+      handleGetActions()
+      sendResponse({ actions })
+      break
+    }
+  }
+  return true
+})
+
 chrome.action.onClicked.addListener((tab) => {
   // 点击插件图标
-  console.log(tab)
+  chrome.tabs.sendMessage(tab.id, {request: 'icon-click'})
 })
 
 chrome.commands.onCommand.addListener((command) => {
   // 监听指令
   console.log('command', command)
-  getCurrentTab().then((tab) => {
-    console.log('curTab', tab)
-  })
-  getAllTabs()
 })
 
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) =>
+  handleGetActions()
+)
+chrome.tabs.onCreated.addListener((tab) => handleGetActions())
+chrome.tabs.onRemoved.addListener((tabId, changeInfo) => handleGetActions())
+
 const getAllTabs = () => {
-  chrome.tabs.query({}, (tabs) => {
-    console.log('allTabs', tabs)
-  })
+  chrome.tabs.query(
+    {
+      currentWindow: true
+    },
+    (tabs) => {
+      actions = []
+      const allTabs = tabs
+        .map((tab) => ({
+          ...tab,
+          desc: 'tab',
+          atcion: 'switch-tab'
+        }))
+
+      actions = [...allTabs]
+    }
+  )
 }
 
 async function getCurrentTab() {
@@ -84,3 +111,17 @@ async function getCurrentTab() {
   let [tab] = await chrome.tabs.query(queryOptions)
   return tab
 }
+
+const clearActions = () => {
+  getCurrentTab().then(tab => {
+    actions = []
+  })
+}
+
+const handleGetActions = () => {
+  // 初始化
+  // clearActions()
+  getAllTabs()
+}
+
+handleGetActions()
