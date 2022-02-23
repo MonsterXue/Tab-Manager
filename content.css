@@ -2,8 +2,6 @@
   padding: 0;
   margin: 0;
   list-style: none;
-  width: unset;
-  height: unset;
   line-height: normal;
 }
 
@@ -11,25 +9,25 @@
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
-  src: url('assets/Inter-Regular.ttf');
+  src: url('chrome-extension://__MSG_@@extension_id__/assets/Inter-Regular.ttf');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 500;
-  src: url('assets/Inter-Medium.ttf');
+  src: url('chrome-extension://__MSG_@@extension_id__/assets/Inter-Medium.ttf');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 600;
-  src: url('assets/Inter-SemiBold.ttf');
+  src: url('chrome-extension://__MSG_@@extension_id__/assets/Inter-SemiBold.ttf');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 700;
-  src: url('assets/Inter-Bold.ttf');
+  src: url('chrome-extension://__MSG_@@extension_id__/assets/Inter-Bold.ttf');
 }
 
 #tab-manager .tab-manager-content::-webkit-scrollbar {
@@ -121,7 +119,7 @@
   cursor: pointer;
 }
 
-.tab-manager-content .tab-manager-item-wrap:hover {
+.tab-manager-content .tab-manager-item-active {
   border-left: 2px solid #6068d2;
   background-color: #eff3f9;
 }

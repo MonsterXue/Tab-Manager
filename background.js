@@ -1,7 +1,7 @@
 /*
  * @Author: MonsterXue
  * @Date: 2022-02-18 14:30:30
- * @LastEditTime: 2022-02-22 16:34:47
+ * @LastEditTime: 2022-02-23 18:26:44
  * @LastEditors: MonsterXue
  * @FilePath: \tab-manager\background.js
  * @Description:
@@ -60,19 +60,23 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // 接收content发送的消息
+  console.log(message)
   switch (message.request) {
     case 'get-actions': {
       handleGetActions()
       sendResponse({ actions })
       break
     }
+    case 'switch-tab': {
+      handleSwitchTab(message.tab)
+      break
+    }
   }
-  return true
 })
 
 chrome.action.onClicked.addListener((tab) => {
   // 点击插件图标
-  chrome.tabs.sendMessage(tab.id, {request: 'icon-click'})
+  chrome.tabs.sendMessage(tab.id, { request: 'icon-click' })
 })
 
 chrome.commands.onCommand.addListener((command) => {
@@ -87,22 +91,14 @@ chrome.tabs.onCreated.addListener((tab) => handleGetActions())
 chrome.tabs.onRemoved.addListener((tabId, changeInfo) => handleGetActions())
 
 const getAllTabs = () => {
-  chrome.tabs.query(
-    {
-      currentWindow: true
-    },
-    (tabs) => {
-      actions = []
-      const allTabs = tabs
-        .map((tab) => ({
-          ...tab,
-          desc: 'tab',
-          atcion: 'switch-tab'
-        }))
-
-      actions = [...allTabs]
-    }
-  )
+  chrome.tabs.query({}, (tabs) => {
+    const allTabs = tabs.map((tab) => ({
+      ...tab,
+      desc: 'tab',
+      action: 'switch-tab'
+    }))
+    actions = [...allTabs]
+  })
 }
 
 async function getCurrentTab() {
@@ -113,7 +109,7 @@ async function getCurrentTab() {
 }
 
 const clearActions = () => {
-  getCurrentTab().then(tab => {
+  getCurrentTab().then((tab) => {
     actions = []
   })
 }
@@ -124,4 +120,10 @@ const handleGetActions = () => {
   getAllTabs()
 }
 
-handleGetActions()
+const handleSwitchTab = (tab) => {
+  chrome.tabs.highlight({
+    tabs: tab.index,
+    windowId: tab.windowId
+  })
+  chrome.windows.update(tab.windowId, { focused: true })
+}
