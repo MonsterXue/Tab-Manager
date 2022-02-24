@@ -1,5 +1,8 @@
 # Tab-Manager
 
+## Tips:
+
+    解压之后添加到浏览器扩展即可
 ## Command:
 
   + <kbd>Ctrl</kbd> + <kbd>x</kbd>: 打开/关闭面板
