@@ -1,7 +1,7 @@
 /*
  * @Author: MonsterXue
  * @Date: 2022-02-18 14:30:30
- * @LastEditTime: 2022-02-23 18:26:44
+ * @LastEditTime: 2022-02-24 15:03:45
  * @LastEditors: MonsterXue
  * @FilePath: \tab-manager\background.js
  * @Description:
@@ -60,7 +60,6 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // 接收content发送的消息
-  console.log(message)
   switch (message.request) {
     case 'get-actions': {
       handleGetActions()
@@ -71,7 +70,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       handleSwitchTab(message.tab)
       break
     }
+    case 'get-current-tab': {
+      getCurrentTab().then(tab => {
+        sendResponse(tab)
+      })
+      break
+    }
   }
+  return true
 })
 
 chrome.action.onClicked.addListener((tab) => {
@@ -81,7 +87,11 @@ chrome.action.onClicked.addListener((tab) => {
 
 chrome.commands.onCommand.addListener((command) => {
   // 监听指令
-  console.log('command', command)
+  if (command == 'open-list') {
+    getCurrentTab().then(response => {
+      chrome.tabs.sendMessage(response.id, { request: 'icon-click' })
+    })
+  }
 })
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) =>
@@ -127,3 +137,5 @@ const handleSwitchTab = (tab) => {
   })
   chrome.windows.update(tab.windowId, { focused: true })
 }
+
+handleGetActions()

@@ -1,13 +1,14 @@
 /*
  * @Author: MonsterXue
  * @Date: 2022-02-18 17:07:57
- * @LastEditTime: 2022-02-23 18:24:11
+ * @LastEditTime: 2022-02-24 15:38:25
  * @LastEditors: MonsterXue
  * @FilePath: \tab-manager\content.js
  * @Description:
  */
 
 let isOpen = false
+let keyMap = {}
 
 $(function () {
   let actions = []
@@ -21,18 +22,20 @@ $(function () {
     $('.tab-manager-wrap').addClass('tab-manager-closing')
   }
 
-  const openPanel = () => {
-    handleGetActions(() => {
-      isOpen = true
-      $('.tab-manager-wrap').removeClass('tab-manager-closing')
-      getPanelList()
-    })
+  const openPanel = async () => {
+    await handleGetActions()
+    isOpen = true
+    $('.tab-manager-wrap').removeClass('tab-manager-closing')
+    $('.tab-manager-head input').val('')
+    getPanelList()
+    setTimeout(() => {
+      $('.tab-manager-head input').focus()
+    }, 50)
   }
 
-  const getPanelList = () => {
+  const getPanelList = (panelActions = actions) => {
     $('.tab-manager-content').html('')
-    console.log(actions)
-    actions.forEach((tab, index) => {
+    panelActions.forEach((tab, index) => {
       let panelList = ''
       const img = new Image()
       img.src = tab.favIconUrl
@@ -45,7 +48,7 @@ $(function () {
           chrome.runtime.getURL('assets/Edge.png')
         )
       }
-      panelList += `<div class="tab-manager-item-wrap" data-ind=${index}>
+      panelList += `<div class="tab-manager-item-wrap" data-ind=${index} data-tab=${tab.id}>
           <div class="tab-manager-item-info">
            ${img.outerHTML}
            <div class="tab-manager-item">${tab.title}</div>
@@ -78,10 +81,12 @@ $(function () {
     })
   }
 
-  const handleGetActions = (cb) => {
-    chrome.runtime.sendMessage({ request: 'get-actions' }, (response) => {
-      actions = response.actions
-      cb(response)
+  const handleGetActions = () => {
+    return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({ request: 'get-actions' }, (response) => {
+        actions = response.actions
+        resolve(response)
+      })
     })
   }
 
@@ -119,6 +124,46 @@ $(function () {
     }
   }
 
+  const handleEnter = () => {
+    const activeItem = $('.tab-manager-item-active')
+    const tabId = activeItem.attr('data-tab')
+    if (tabId) {
+      handleAction(actions.findIndex((action) => action.id == tabId))
+      closePanel()
+    }
+  }
+
+  const handleTabLeft = async () => {
+    await handleGetActions()
+    const currentTab = await handleSendMessage({ request: 'get-current-tab' })
+    const findTabById = actions.findIndex((tab) => tab.id == currentTab.id)
+    if (findTabById > 0) {
+      handleAction(findTabById - 1)
+      keyMap = {}
+    }
+  }
+
+  const handleTabRight = async () => {
+    await handleGetActions()
+    const currentTab = await handleSendMessage({ request: 'get-current-tab' })
+    const findTabById = actions.findIndex((tab) => tab.id == currentTab.id)
+    if (findTabById != -1 && findTabById < actions.length - 1) {
+      handleAction(findTabById + 1)
+      keyMap = {}
+    }
+  }
+
+  const handleSearch = () => {
+    const inputValue = $('.tab-manager-head input').val()
+    getPanelList(actions.filter((action) => action.title.includes(inputValue)))
+  }
+
+  const handleSendMessage = (message) => {
+    return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage(message, (response) => resolve(response))
+    })
+  }
+
   chrome.runtime.onMessage.addListener((message, sender, response) => {
     if (message.request == 'icon-click') {
       if (isOpen) {
@@ -129,24 +174,52 @@ $(function () {
     }
   })
 
-  $(document).keydown((e) => {
-    if (!isOpen) {
-      return
-    }
+  $(document)
+    .keydown((e) => {
+      const { keyCode, ctrlKey } = e
+      keyMap[keyCode] = true
 
-    const { keyCode } = e
+      if (keyCode == 37 && ctrlKey) {
+        handleTabLeft()
+        return
+      }
 
-    switch (keyCode) {
-      case 38: {
-        e.preventDefault()
-        handleArrowUp()
-        break
+      if (keyCode == 39 && ctrlKey) {
+        handleTabRight()
+        return
       }
-      case 40: {
-        e.preventDefault()
-        handleArrowDown()
-        break
+
+      if (!isOpen) {
+        return
       }
-    }
-  })
+
+      switch (keyCode) {
+        case 38: {
+          e.preventDefault()
+          handleArrowUp()
+          break
+        }
+        case 40: {
+          e.preventDefault()
+          handleArrowDown()
+          break
+        }
+        case 13: {
+          e.preventDefault()
+          handleEnter()
+          break
+        }
+        case 27: {
+          e.preventDefault()
+          closePanel()
+        }
+      }
+    })
+    .keyup((e) => {
+      const { keyCode } = e
+
+      delete keyMap[keyCode]
+    })
+
+  $(document).on('input', '.tab-manager-head input', handleSearch)
 })
