@@ -1,7 +1,7 @@
 /*
  * @Author: MonsterXue
  * @Date: 2022-02-18 17:07:57
- * @LastEditTime: 2022-02-24 15:38:25
+ * @LastEditTime: 2022-02-25 11:25:22
  * @LastEditors: MonsterXue
  * @FilePath: \tab-manager\content.js
  * @Description:
@@ -12,10 +12,20 @@ let keyMap = {}
 
 $(function () {
   let actions = []
-
-  $.get(chrome.runtime.getURL('content.html'), (data) => {
-    $(data).appendTo('body')
-  })
+  
+  const injectPanelDom = () => {
+    const template = `<div class="tab-manager-wrap tab-manager-closing">
+      <div class="tab-manager-dialog"></div>
+      <div id="tab-manager">
+        <div class="tab-manager-head">
+          <input placeholder="请输入关键字" />
+        </div>
+        <div class="tab-manager-content"></div>
+      <div class="tab-manager-footer">Made by MonsterXue</div>
+      </div>
+    </div>`
+    $('body').append(template)
+  }
 
   const closePanel = () => {
     isOpen = false
@@ -222,4 +232,6 @@ $(function () {
     })
 
   $(document).on('input', '.tab-manager-head input', handleSearch)
+
+  injectPanelDom()
 })
