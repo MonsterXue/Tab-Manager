@@ -1,7 +1,7 @@
 /*
  * @Author: MonsterXue
  * @Date: 2022-02-18 17:07:57
- * @LastEditTime: 2022-02-25 11:25:22
+ * @LastEditTime: 2022-02-25 17:17:18
  * @LastEditors: MonsterXue
  * @FilePath: \tab-manager\content.js
  * @Description:
@@ -12,7 +12,9 @@ let keyMap = {}
 
 $(function () {
   let actions = []
-  
+
+  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
+
   const injectPanelDom = () => {
     const template = `<div class="tab-manager-wrap tab-manager-closing">
       <div class="tab-manager-dialog"></div>
@@ -186,15 +188,15 @@ $(function () {
 
   $(document)
     .keydown((e) => {
-      const { keyCode, ctrlKey } = e
+      const { keyCode, ctrlKey, metaKey } = e
       keyMap[keyCode] = true
 
-      if (keyCode == 37 && ctrlKey) {
+      if (keyCode == 37 && (ctrlKey || (isMac && metaKey))) {
         handleTabLeft()
         return
       }
 
-      if (keyCode == 39 && ctrlKey) {
+      if (keyCode == 39 && (ctrlKey || (isMac && metaKey))) {
         handleTabRight()
         return
       }
