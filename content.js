@@ -1,7 +1,7 @@
 /*
  * @Author: MonsterXue
  * @Date: 2022-02-18 17:07:57
- * @LastEditTime: 2022-02-25 17:17:18
+ * @LastEditTime: 2022-03-01 09:44:05
  * @LastEditors: MonsterXue
  * @FilePath: \tab-manager\content.js
  * @Description:
@@ -177,11 +177,17 @@ $(function () {
   }
 
   chrome.runtime.onMessage.addListener((message, sender, response) => {
+    console.log(message)
     if (message.request == 'icon-click') {
       if (isOpen) {
         closePanel()
       } else {
         openPanel()
+      }
+    } else if (message.request == 'inject-dom') {
+      console.log($('#tab-manager')[0])
+      if (!$('#tab-manager')[0]) {
+        injectPanelDom()
       }
     }
   })
@@ -234,6 +240,4 @@ $(function () {
     })
 
   $(document).on('input', '.tab-manager-head input', handleSearch)
-
-  injectPanelDom()
 })

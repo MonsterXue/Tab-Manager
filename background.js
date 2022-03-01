@@ -1,7 +1,7 @@
 /*
  * @Author: MonsterXue
  * @Date: 2022-02-18 14:30:30
- * @LastEditTime: 2022-02-24 15:03:45
+ * @LastEditTime: 2022-03-01 09:45:15
  * @LastEditors: MonsterXue
  * @FilePath: \tab-manager\background.js
  * @Description:
@@ -71,7 +71,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       break
     }
     case 'get-current-tab': {
-      getCurrentTab().then(tab => {
+      getCurrentTab().then((tab) => {
         sendResponse(tab)
       })
       break
@@ -88,7 +88,7 @@ chrome.action.onClicked.addListener((tab) => {
 chrome.commands.onCommand.addListener((command) => {
   // 监听指令
   if (command == 'open-list') {
-    getCurrentTab().then(response => {
+    getCurrentTab().then((response) => {
       chrome.tabs.sendMessage(response.id, { request: 'icon-click' })
     })
   }
@@ -128,6 +128,9 @@ const handleGetActions = () => {
   // 初始化
   // clearActions()
   getAllTabs()
+  getCurrentTab().then((response) => {
+    chrome.tabs.sendMessage(response.id, { request: 'inject-dom' })
+  })
 }
 
 const handleSwitchTab = (tab) => {
@@ -138,4 +141,4 @@ const handleSwitchTab = (tab) => {
   chrome.windows.update(tab.windowId, { focused: true })
 }
 
-handleGetActions()
+// handleGetActions()
